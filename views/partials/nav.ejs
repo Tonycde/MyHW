@@ -1,0 +1,19 @@
+<nav class="nav">
+  <a href="/tareas" class="nav-logo">MyHW</a>
+
+  <div class="nav-links">
+    <a href="/tareas" class="<%= locals.pagina === 'tareas' ? 'activo' : '' %>">Mis Tareas</a>
+    <a href="/tareas?vista=tablero" class="<%= locals.pagina === 'tablero' ? 'activo' : '' %>">Tablero</a>
+    <% if (usuario && usuario.rol === 'admin') { %>
+    <a href="/usuarios" class="<%= locals.pagina === 'usuarios' ? 'activo' : '' %>">Usuarios</a>
+    <% } %>
+  </div>
+
+  <div class="nav-usuario">
+    <% if (usuario) { %>
+      <span>Hola, <strong><%= usuario.nombre.split(' ')[0] %></strong></span>
+      <span class="badge-rol <%= usuario.rol === 'admin' ? 'admin' : '' %>"><%= usuario.rol %></span>
+      <a href="/auth/logout" class="btn btn-secundario btn-sm">Salir</a>
+    <% } %>
+  </div>
+</nav>

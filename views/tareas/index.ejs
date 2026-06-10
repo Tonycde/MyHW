@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tareas — MyHW</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <%- include('../partials/nav', { pagina: 'tareas', usuario }) %>
+
+  <div class="contenedor">
+
+    <% if (mensaje) { %>
+      <div class="alerta alerta-exito"><%= mensaje %></div>
+    <% } %>
+
+    <!-- Stats solo para admin -->
+    <% if (stats) { %>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-num"><%= stats.total %></div>
+        <div class="stat-label">Total</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" style="color:#d97706"><%= stats.pendiente %></div>
+        <div class="stat-label">Pendientes</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" style="color:#2563eb"><%= stats.en_progreso %></div>
+        <div class="stat-label">En progreso</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" style="color:#16a34a"><%= stats.completada %></div>
+        <div class="stat-label">Completadas</div>
+      </div>
+    </div>
+    <% } %>
+
+    <!-- Filtros -->
+    <form method="GET" action="/tareas" class="filtros">
+      <div>
+        <label style="font-size:.8rem;font-weight:600;display:block;margin-bottom:.2rem">Estado</label>
+        <select name="estado" onchange="this.form.submit()">
+          <option value="">Todos</option>
+          <option value="pendiente"   <%= filtros.estado === 'pendiente'   ? 'selected' : '' %>>Pendiente</option>
+          <option value="en_progreso" <%= filtros.estado === 'en_progreso' ? 'selected' : '' %>>En progreso</option>
+          <option value="completada"  <%= filtros.estado === 'completada'  ? 'selected' : '' %>>Completada</option>
+        </select>
+      </div>
+
+      <% if (usuario.rol === 'admin' && usuarios.length > 0) { %>
+      <div>
+        <label style="font-size:.8rem;font-weight:600;display:block;margin-bottom:.2rem">Usuario</label>
+        <select name="asignado" onchange="this.form.submit()">
+          <option value="">Todos</option>
+          <% usuarios.forEach(u => { %>
+          <option value="<%= u._id %>" <%= filtros.asignado === u._id ? 'selected' : '' %>><%= u.nombre %></option>
+          <% }) %>
+        </select>
+      </div>
+      <% } %>
+
+      <input type="hidden" name="vista" value="<%= filtros.vista %>">
+
+      <% if (filtros.estado || filtros.asignado) { %>
+        <a href="/tareas" class="btn btn-secundario btn-sm" style="align-self:flex-end">Limpiar filtros</a>
+      <% } %>
+
+      <div style="margin-left:auto; align-self:flex-end">
+        <div class="toggle-vista">
+          <a href="?vista=lista&estado=<%= filtros.estado||'' %>&asignado=<%= filtros.asignado||'' %>"
+             class="<%= filtros.vista !== 'tablero' ? 'activo' : '' %>">☰ Lista</a>
+          <a href="?vista=tablero&estado=<%= filtros.estado||'' %>&asignado=<%= filtros.asignado||'' %>"
+             class="<%= filtros.vista === 'tablero' ? 'activo' : '' %>">⬜ Tablero</a>
+        </div>
+      </div>
+    </form>
+
+    <div class="card-header" style="margin-bottom:.8rem">
+      <h2 style="font-size:1.1rem">
+        <%= usuario.rol === 'admin' ? 'Todas las tareas' : 'Mis tareas' %>
+        <span class="texto-suave" style="font-weight:normal; font-size:.9rem">(<%= tareas.length %>)</span>
+      </h2>
+      <a href="/tareas/nueva" class="btn btn-primario">+ Nueva tarea</a>
+    </div>
+
+    <!-- VISTA LISTA -->
+    <% if (filtros.vista !== 'tablero') { %>
+      <div class="card" style="padding:0; overflow:hidden">
+        <% if (tareas.length === 0) { %>
+          <p class="texto-centro texto-suave" style="padding:2.5rem">No hay tareas que mostrar</p>
+        <% } else { %>
+        <table class="tabla">
+          <thead>
+            <tr>
+              <th>Título</th>
+              <th>Estado</th>
+              <th>Prioridad</th>
+              <% if (usuario.rol === 'admin') { %><th>Asignado a</th><% } %>
+              <th>Vencimiento</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% tareas.forEach(t => { %>
+            <tr>
+              <td>
+                <a href="/tareas/<%= t._id %>" style="font-weight:500; color:var(--texto)">
+                  <%= t.titulo %>
+                </a>
+                <% if (t.descripcion) { %>
+                  <br><span class="texto-suave" style="font-size:.8rem"><%= t.descripcion.slice(0,60) %><%= t.descripcion.length > 60 ? '...' : '' %></span>
+                <% } %>
+              </td>
+              <td><span class="badge estado-<%= t.estado %>"><%= t.estado.replace('_',' ') %></span></td>
+              <td><span class="badge prioridad-<%= t.prioridad %>"><%= t.prioridad %></span></td>
+              <% if (usuario.rol === 'admin') { %>
+                <td class="texto-suave" style="font-size:.85rem"><%= t.nombreAsignado %></td>
+              <% } %>
+              <td class="texto-suave" style="font-size:.85rem">
+                <% if (t.vencimiento) { %>
+                  <%= new Date(t.vencimiento).toLocaleDateString('es-MX') %>
+                <% } else { %> — <% } %>
+              </td>
+              <td>
+                <div class="acciones">
+                  <a href="/tareas/<%= t._id %>/editar" class="btn btn-secundario btn-sm">Editar</a>
+                  <form method="POST" action="/tareas/<%= t._id %>?_method=DELETE" style="display:inline"
+                        onsubmit="return confirm('¿Eliminar esta tarea?')">
+                    <button type="submit" class="btn btn-peligro btn-sm">Eliminar</button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+            <% }) %>
+          </tbody>
+        </table>
+        <% } %>
+      </div>
+
+    <!-- VISTA TABLERO KANBAN -->
+    <% } else { %>
+      <%
+        const pendientes   = tareas.filter(t => t.estado === 'pendiente')
+        const enProgreso   = tareas.filter(t => t.estado === 'en_progreso')
+        const completadas  = tareas.filter(t => t.estado === 'completada')
+      %>
+      <div class="tablero">
+        <!-- Pendiente -->
+        <div class="columna-kanban">
+          <div class="columna-titulo pendiente">⏳ Pendiente (<%= pendientes.length %>)</div>
+          <% pendientes.forEach(t => { %>
+            <div class="tarjeta-kanban" onclick="location.href='/tareas/<%= t._id %>'">
+              <h4><%= t.titulo %></h4>
+              <% if (t.descripcion) { %><p><%= t.descripcion.slice(0,80) %></p><% } %>
+              <div style="margin-top:.5rem; display:flex; gap:.4rem; flex-wrap:wrap">
+                <span class="badge prioridad-<%= t.prioridad %>"><%= t.prioridad %></span>
+                <% if (t.nombreAsignado !== 'Sin asignar') { %>
+                  <span style="font-size:.75rem; color:var(--texto-suave)">👤 <%= t.nombreAsignado %></span>
+                <% } %>
+              </div>
+              <form method="POST" action="/tareas/<%= t._id %>/estado" style="margin-top:.6rem" onclick="event.stopPropagation()">
+                <select name="estado" onchange="this.form.submit()" style="font-size:.78rem; padding:.2rem .4rem; border-radius:6px; border:1px solid var(--borde)">
+                  <option value="pendiente" selected>Pendiente</option>
+                  <option value="en_progreso">En progreso</option>
+                  <option value="completada">Completada</option>
+                </select>
+              </form>
+            </div>
+          <% }) %>
+          <% if (pendientes.length === 0) { %><p class="texto-suave" style="font-size:.85rem; text-align:center; padding:.5rem">Sin tareas</p><% } %>
+        </div>
+
+        <!-- En progreso -->
+        <div class="columna-kanban">
+          <div class="columna-titulo en_progreso">🔄 En progreso (<%= enProgreso.length %>)</div>
+          <% enProgreso.forEach(t => { %>
+            <div class="tarjeta-kanban" onclick="location.href='/tareas/<%= t._id %>'">
+              <h4><%= t.titulo %></h4>
+              <% if (t.descripcion) { %><p><%= t.descripcion.slice(0,80) %></p><% } %>
+              <div style="margin-top:.5rem; display:flex; gap:.4rem">
+                <span class="badge prioridad-<%= t.prioridad %>"><%= t.prioridad %></span>
+              </div>
+              <form method="POST" action="/tareas/<%= t._id %>/estado" style="margin-top:.6rem" onclick="event.stopPropagation()">
+                <select name="estado" onchange="this.form.submit()" style="font-size:.78rem; padding:.2rem .4rem; border-radius:6px; border:1px solid var(--borde)">
+                  <option value="pendiente">Pendiente</option>
+                  <option value="en_progreso" selected>En progreso</option>
+                  <option value="completada">Completada</option>
+                </select>
+              </form>
+            </div>
+          <% }) %>
+          <% if (enProgreso.length === 0) { %><p class="texto-suave" style="font-size:.85rem; text-align:center; padding:.5rem">Sin tareas</p><% } %>
+        </div>
+
+        <!-- Completada -->
+        <div class="columna-kanban">
+          <div class="columna-titulo completada">✅ Completada (<%= completadas.length %>)</div>
+          <% completadas.forEach(t => { %>
+            <div class="tarjeta-kanban" onclick="location.href='/tareas/<%= t._id %>'">
+              <h4 style="text-decoration:line-through; opacity:.7"><%= t.titulo %></h4>
+              <div style="margin-top:.5rem; display:flex; gap:.4rem">
+                <span class="badge prioridad-<%= t.prioridad %>"><%= t.prioridad %></span>
+              </div>
+              <form method="POST" action="/tareas/<%= t._id %>/estado" style="margin-top:.6rem" onclick="event.stopPropagation()">
+                <select name="estado" onchange="this.form.submit()" style="font-size:.78rem; padding:.2rem .4rem; border-radius:6px; border:1px solid var(--borde)">
+                  <option value="pendiente">Pendiente</option>
+                  <option value="en_progreso">En progreso</option>
+                  <option value="completada" selected>Completada</option>
+                </select>
+              </form>
+            </div>
+          <% }) %>
+          <% if (completadas.length === 0) { %><p class="texto-suave" style="font-size:.85rem; text-align:center; padding:.5rem">Sin tareas</p><% } %>
+        </div>
+      </div>
+    <% } %>
+
+  </div>
+</body>
+</html>

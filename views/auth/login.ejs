@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Iniciar sesión — MyHW</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="contenedor-sm">
+    <div class="auth-card">
+      <div class="auth-titulo">
+        <div style="font-size:2.5rem; margin-bottom:.5rem"></div>
+        <h1>MyHW</h1>
+        <p>Inicia sesión para continuar</p>
+      </div>
+
+      <% if (error) { %>
+        <div class="alerta alerta-error"><%= error %></div>
+      <% } %>
+      <% if (locals.ok) { %>
+        <div class="alerta alerta-exito">Cuenta creada correctamente. Inicia sesión.</div>
+      <% } %>
+
+      <form method="POST" action="/auth/login">
+        <div class="form-grupo">
+          <label for="email">Correo electrónico</label>
+          <input type="email" id="email" name="email" placeholder="correo@ejemplo.com" required>
+        </div>
+        <div class="form-grupo">
+          <label for="password">Contraseña</label>
+          <input type="password" id="password" name="password" placeholder="••••••••" required>
+        </div>
+        <button type="submit" class="btn btn-primario btn-bloque mt-2">Iniciar sesión</button>
+      </form>
+
+      <p class="texto-centro mt-2 texto-suave" style="font-size:.875rem">
+        ¿No tienes cuenta? <a href="/auth/registro">Regístrate</a>
+      </p>
+    </div>
+
+    <p class="texto-centro mt-2 texto-suave" style="font-size:.8rem">
+      Admin de prueba: <strong>admin@myhw.com</strong> / <strong>admin123</strong>
+    </p>
+  </div>
+</body>
+</html>

@@ -1,0 +1,23 @@
+{
+  "name": "myhw",
+  "version": "1.0.0",
+  "description": "Sistema de gestión de tareas colaborativas",
+  "main": "app.js",
+  "type": "module",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "node --watch app.js",
+    "seed": "node seed.js"
+  },
+  "author": "Antonio Garcia",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.7",
+    "ejs": "^3.1.10",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.2",
+    "method-override": "^3.0.0",
+    "nedb-promises": "^6.2.1"
+  }
+}

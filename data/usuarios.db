@@ -1,0 +1,5 @@
+{"nombre":"Antonio","email":"garciaestradaantonio32@gmail.com","password":"$2a$10$7ogGbAI7O4ZGM2dA7HwrZ.pTmPdTiZ/MUEMrLxrq95zgid72DoPKm","rol":"usuario","creadoEn":{"$$date":1780952328316},"_id":"FK9J45J9nsjtadZm"}
+{"nombre":"Ana García","email":"ana@taskflow.com","password":"$2b$10$O93amqaqjiKZGk7Ed/XEp.fy4kqjc9HPvIZkUHScn70v4m6pgw9hG","rol":"usuario","creadoEn":{"$$date":1780726482101},"_id":"c3bn1mM5UKuPMfJj"}
+{"nombre":"Administrador","email":"admin@myhw.com","password":"$2b$10$iNJD8dsRzfiy5mbCv4usTuFjEuN7.I13kDmHJEourl3l0hvl4vnve","rol":"admin","creadoEn":{"$$date":1780726482021},"_id":"lStud1HmvFC7YANS"}
+{"nombre":"Luis Mendoza","email":"luis@taskflow.com","password":"$2b$10$49s0KkmkL22b9TmUG5lbDOo51eHxlPT6FepS89GMzWD2Q5BRrVi7y","rol":"usuario","creadoEn":{"$$date":1780726482183},"_id":"vBWxF4uOi2K1Kjmk"}
+{"nombre":"jonathan","email":"luisgarciaborjas10@gmail.com","password":"$2a$10$um66H2IaA4845pRdHqYD1uOwgHySnAT3vScmVH6k1OKUN/sGaS/iy","rol":"usuario","creadoEn":{"$$date":1780959612768},"_id":"spqwsGDrgVKZwclr"}

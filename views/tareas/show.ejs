@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= tarea.titulo %> — MyHW</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <%- include('../partials/nav', { pagina: 'tareas', usuario }) %>
+
+  <div class="contenedor" style="max-width:800px">
+    <div style="display:flex; align-items:center; gap:.8rem; margin-bottom:1.5rem">
+      <a href="/tareas" class="btn btn-secundario btn-sm">← Volver</a>
+      <h1 style="font-size:1.3rem">Detalle de tarea</h1>
+    </div>
+
+    <% if (locals.mensaje) { %>
+      <div class="alerta alerta-exito"><%= mensaje %></div>
+    <% } %>
+
+    <div class="detalle-grid">
+      <div class="card">
+        <div class="card-header">
+          <h2 style="font-size:1.15rem"><%= tarea.titulo %></h2>
+          <div class="acciones">
+            <a href="/tareas/<%= tarea._id %>/editar" class="btn btn-secundario btn-sm">Editar</a>
+            <form method="POST" action="/tareas/<%= tarea._id %>?_method=DELETE"
+                  onsubmit="return confirm('¿Seguro que quieres eliminar esta tarea?')">
+              <button type="submit" class="btn btn-peligro btn-sm">Eliminar</button>
+            </form>
+          </div>
+        </div>
+
+        <% if (tarea.descripcion) { %>
+          <p style="margin-bottom:1rem; color:var(--texto-suave)"><%= tarea.descripcion %></p>
+        <% } else { %>
+          <p style="margin-bottom:1rem; color:var(--texto-suave); font-style:italic">Sin descripción</p>
+        <% } %>
+
+        <hr style="border:none; border-top:1px solid var(--borde); margin-bottom:1rem">
+
+        <dl>
+          <div class="detalle-item">
+            <dt>Estado</dt>
+            <dd><span class="badge estado-<%= tarea.estado %>"><%= tarea.estado.replace('_',' ') %></span></dd>
+          </div>
+          <div class="detalle-item">
+            <dt>Prioridad</dt>
+            <dd><span class="badge prioridad-<%= tarea.prioridad %>"><%= tarea.prioridad %></span></dd>
+          </div>
+          <% if (tarea.vencimiento) { %>
+          <div class="detalle-item">
+            <dt>Vencimiento</dt>
+            <dd><%= new Date(tarea.vencimiento).toLocaleDateString('es-MX', { dateStyle: 'long' }) %></dd>
+          </div>
+          <% } %>
+        </dl>
+
+        <!-- Cambio rápido de estado -->
+        <div style="margin-top:1.2rem; padding-top:1rem; border-top:1px solid var(--borde)">
+          <p style="font-size:.85rem; font-weight:600; margin-bottom:.5rem">Cambiar estado</p>
+          <form method="POST" action="/tareas/<%= tarea._id %>/estado" style="display:flex; gap:.5rem">
+            <select name="estado" style="padding:.4rem .7rem; border:1px solid var(--borde); border-radius:var(--radio); font-size:.875rem">
+              <option value="pendiente"   <%= tarea.estado === 'pendiente'   ? 'selected' : '' %>>Pendiente</option>
+              <option value="en_progreso" <%= tarea.estado === 'en_progreso' ? 'selected' : '' %>>En progreso</option>
+              <option value="completada"  <%= tarea.estado === 'completada'  ? 'selected' : '' %>>Completada</option>
+            </select>
+            <button type="submit" class="btn btn-primario btn-sm">Actualizar</button>
+          </form>
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <h3 style="font-size:.9rem; font-weight:600; margin-bottom:1rem; color:var(--texto-suave)">INFORMACIÓN</h3>
+          <dl>
+            <div class="detalle-item">
+              <dt>Asignado a</dt>
+              <dd><%= asignado ? asignado.nombre : 'Sin asignar' %></dd>
+            </div>
+            <div class="detalle-item">
+              <dt>Creado por</dt>
+              <dd><%= creador ? creador.nombre : 'Desconocido' %></dd>
+            </div>
+            <div class="detalle-item">
+              <dt>Creado el</dt>
+              <dd><%= new Date(tarea.creadoEn).toLocaleDateString('es-MX') %></dd>
+            </div>
+            <div class="detalle-item">
+              <dt>Última actualización</dt>
+              <dd><%= new Date(tarea.actualizadoEn).toLocaleDateString('es-MX') %></dd>
+            </div>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

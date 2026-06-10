@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Error — MyHW</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <% if (usuario) { %><%- include('./partials/nav', { pagina: '', usuario }) %><% } %>
+  <div class="contenedor-sm" style="text-align:center; margin-top:5rem">
+    <div style="font-size:3rem; margin-bottom:1rem">⚠️</div>
+    <h1 style="margin-bottom:.5rem">Oops</h1>
+    <p class="texto-suave" style="margin-bottom:1.5rem"><%= mensaje %></p>
+    <a href="/tareas" class="btn btn-primario">Ir al inicio</a>
+  </div>
+</body>
+</html>

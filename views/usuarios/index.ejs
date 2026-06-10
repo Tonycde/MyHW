@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Usuarios — MyHW</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <%- include('../partials/nav', { pagina: 'usuarios', usuario }) %>
+
+  <div class="contenedor">
+    <% if (mensaje) { %>
+      <div class="alerta alerta-<%= mensaje.includes('No puedes') ? 'error' : 'exito' %>"><%= mensaje %></div>
+    <% } %>
+
+    <div class="card">
+      <div class="card-header">
+        <h2 class="card-titulo">Usuarios registrados (<%= usuarios.length %>)</h2>
+      </div>
+
+      <table class="tabla">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Correo</th>
+            <th>Rol</th>
+            <th>Registrado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% usuarios.forEach(u => { %>
+          <tr>
+            <td style="font-weight:500"><%= u.nombre %></td>
+            <td class="texto-suave" style="font-size:.875rem"><%= u.email %></td>
+            <td><span class="badge-rol <%= u.rol === 'admin' ? 'admin' : '' %>"><%= u.rol %></span></td>
+            <td class="texto-suave" style="font-size:.85rem">
+              <%= new Date(u.creadoEn).toLocaleDateString('es-MX') %>
+            </td>
+            <td>
+              <% if (u._id !== usuario.id) { %>
+              <form method="POST" action="/usuarios/<%= u._id %>?_method=DELETE"
+                    onsubmit="return confirm('¿Eliminar al usuario <%= u.nombre %>?')">
+                <button type="submit" class="btn btn-peligro btn-sm">Eliminar</button>
+              </form>
+              <% } else { %>
+              <span class="texto-suave" style="font-size:.8rem">Eres tú</span>
+              <% } %>
+            </td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</body>
+</html>
